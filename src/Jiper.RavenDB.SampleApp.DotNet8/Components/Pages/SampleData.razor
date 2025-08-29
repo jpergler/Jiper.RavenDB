@@ -1,0 +1,54 @@
+﻿@page "/sample-data"
+
+@using Jiper.RavenDB.SampleApp.DotNet8.Model
+@using Raven.Client.Documents
+
+@inject IDocumentStore Store
+
+<PageTitle>Sample Data</PageTitle>
+
+<h1>Sample Data</h1>
+
+@if (items == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else if (items.Any())
+{
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+        </tr>
+        </thead>
+        <tbody>
+        @foreach (var item in items)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.Name</td>
+            </tr>
+        }
+        </tbody>
+    </table>
+}
+else
+{
+    <div class="alert alert-warning">No items</div>
+}
+
+@code {
+
+    private ICollection<SampleDocument>? items;
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var session = Store.OpenAsyncSession();
+
+        items = await session.Query<SampleDocument>().ToListAsync();
+    }
+
+}

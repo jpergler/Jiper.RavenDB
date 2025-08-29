@@ -3,4 +3,5 @@
     <File Path=".gitignore" />
   </Folder>
   <Project Path="src\Jiper.RavenDB.DependencyInjection\Jiper.RavenDB.DependencyInjection.csproj" Type="Classic C#" />
+  <Project Path="src\Jiper.RavenDB.SampleApp.DotNet8\Jiper.RavenDB.SampleApp.DotNet8.csproj" Type="Classic C#" />
 </Solution>
