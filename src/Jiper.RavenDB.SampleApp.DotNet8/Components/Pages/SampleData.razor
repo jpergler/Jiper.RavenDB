@@ -2,12 +2,17 @@
 
 @using Jiper.RavenDB.SampleApp.DotNet8.Model
 @using Raven.Client.Documents
+@using Raven.Client.Documents.Session
 
 @inject IDocumentStore Store
 
 <PageTitle>Sample Data</PageTitle>
 
 <h1>Sample Data</h1>
+
+<div class="btn-toolbar mb-3">
+    <button class="btn btn-primary" @onclick="AddSampleItem">Add sample item</button>
+</div>
 
 @if (items == null)
 {
@@ -44,10 +49,26 @@ else
 
     private ICollection<SampleDocument>? items;
 
+    private async Task AddSampleItem()
+    {
+        using var session = Store.OpenAsyncSession();
+
+        var sampleDocument = new SampleDocument(Guid.NewGuid().ToString(), $"Sample document {Random.Shared.Next(1, 100)}");
+        await session.StoreAsync(sampleDocument);
+        await session.SaveChangesAsync();
+
+        await LoadItems(session);
+    }
+
     protected override async Task OnInitializedAsync()
     {
         using var session = Store.OpenAsyncSession();
 
+        await LoadItems(session);
+    }
+
+    private async Task LoadItems(IAsyncDocumentSession session)
+    {
         items = await session.Query<SampleDocument>().ToListAsync();
     }
 
